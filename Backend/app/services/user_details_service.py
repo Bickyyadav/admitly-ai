@@ -85,3 +85,30 @@ async def get_all_users_with_call_details():
         print(f"Error fetching all users with call details: {e}")
         return []
 
+
+
+
+async def get_all_users_bulk_export():
+    """
+    Get a list of all users with specific fields for bulk export:
+    Name, Phone Number, Email, City, Selected Course, Specialization, Created At
+    """
+    try:
+        users = await User.find().to_list()
+        results = []
+        for user in users:
+            results.append({
+                "Name": user.name,
+                "Phone Number": user.phone_number,
+                "Email": user.email,
+                "City": user.city,
+                "Selected Course": user.selected_course,
+                "Specialization": user.specialization,
+                "Created At": user.created_at
+            })
+        return results
+    except Exception as e:
+        print(f"Error fetching bulk users: {e}")
+        return []
+
+#create here 

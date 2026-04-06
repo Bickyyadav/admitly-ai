@@ -1,4 +1,4 @@
-from app.models.user import User, Call, CallStatus
+from app.models.user import User, Call, CallStatus, CallAnalysis
 from datetime import datetime, timedelta
 from collections import defaultdict
 
@@ -68,3 +68,45 @@ async def get_dashboard_stats():
         "chart_data": {"pie": pie_data, "bar": bar_data},
         "recent_calls": recent_calls_list,
     }
+
+async def get_quality_score_stats_by_date(date_str: str):
+    """
+    Given a date_str in YYYY-MM-DD format, returns the count of quality scores
+    within specific categories for that date.
+    """
+    try:
+        target_date = datetime.strptime(date_str, "%Y-%m-%d")
+        start_of_day = datetime(target_date.year, target_date.month, target_date.day)
+        end_of_day = datetime(target_date.year, target_date.month, target_date.day, 23, 59, 59, 999999)
+
+        records = await CallAnalysis.find(
+            CallAnalysis.created_at >= start_of_day,
+            CallAnalysis.created_at <= end_of_day
+        ).to_list()
+
+        categories = {
+            "0-30": 0,
+            "31-60": 0,
+            "61-80": 0,
+            "81-90": 0,
+            "91-100": 0
+        }
+
+        for record in records:
+            if record.quality_score is not None:
+                score = record.quality_score
+                if score <= 30:
+                    categories["0-30"] += 1
+                elif score <= 60:
+                    categories["31-60"] += 1
+                elif score <= 80:
+                    categories["61-80"] += 1
+                elif score <= 90:
+                    categories["81-90"] += 1
+                else:
+                    categories["91-100"] += 1
+
+        return categories
+    except ValueError:
+        raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
+        return {}
