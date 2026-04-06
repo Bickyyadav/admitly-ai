@@ -7,39 +7,61 @@ import RecentCalls from "@/components/dashboard/RecentCalls";
 
 export default function Dashboard() {
   const [stats, setStats] = useState<any>(null);
+  const [qualityStats, setQualityStats] = useState<any[]>([]);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(true);
-
+  const [isRefreshingQuality, setIsRefreshingQuality] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
+    const fetchAllData = async (isInitial = false) => {
+      if (isInitial) setLoading(true);
+      else setIsRefreshingQuality(true);
+      
       setError(null);
       try {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/";
-        const url = baseUrl.endsWith('/') ? `${baseUrl}stats` : `${baseUrl}/stats`;
         
-        console.log("Fetching stats from:", url);
-        const response = await fetch(url);
-        
-        if (response.ok) {
-          const result = await response.json();
-          console.log("Stats received:", result);
-          setStats(result);
-        } else {
-          setError(`Server error: ${response.status} ${response.statusText}`);
-          console.error("Backend error:", response.status);
+        // 1. Fetch Main Stats (only on initial load)
+        if (isInitial) {
+          const statsUrl = baseUrl.endsWith('/') ? `${baseUrl}stats` : `${baseUrl}/stats`;
+          const statsResponse = await fetch(statsUrl);
+          if (statsResponse.ok) {
+            const statsResult = await statsResponse.json();
+            setStats(statsResult);
+          }
         }
+
+        // 2. Fetch Quality Stats (depends on selectedDate)
+        const qualityUrl = baseUrl.endsWith('/') ? 
+          `${baseUrl}quality-score-stats?date=${selectedDate}` : 
+          `${baseUrl}/quality-score-stats?date=${selectedDate}`;
+        
+        const qualityResponse = await fetch(qualityUrl);
+        
+        if (qualityResponse.ok) {
+          const qualityResult = await qualityResponse.json();
+          const categories = qualityResult.category_totals || {};
+          const transformed = Object.entries(categories).map(([name, value]) => ({
+            name,
+            value: Number(value)
+          }));
+          setQualityStats(transformed);
+        } else {
+          console.error("Quality stats fetch failed");
+        }
+
       } catch (err) {
         setError("Cannot connect to backend server. Please ensure it is running at http://localhost:8000");
         console.error("Connection error:", err);
       } finally {
         setLoading(false);
+        setIsRefreshingQuality(false);
       }
     };
 
-    fetchStats();
-  }, []);
+    fetchAllData(stats === null);
+  }, [selectedDate]);
 
   if (loading) {
     return (
@@ -61,34 +83,66 @@ export default function Dashboard() {
     recent_calls: stats?.recent_calls ?? [],
     chart_data: {
       pie: stats?.chart_data?.pie ?? [],
-      bar: stats?.chart_data?.bar ?? []
+      bar: stats?.chart_data?.bar ?? [],
+      quality: qualityStats
     }
   };
 
   return (
     <main className="content-area">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
           <h2 className="page-title">Dashboard Overview</h2>
-          <p>Welcome back! Here's what's happening with your AI caller today.</p>
+          <p>Welcome back! Here's what's happening with your AI caller.</p>
         </div>
-        {error && (
-          <div style={{ 
-            padding: '12px 20px', 
-            background: 'var(--badge-red-bg)', 
-            color: 'var(--badge-red-text)', 
-            borderRadius: '12px',
-            fontSize: '13px',
-            fontWeight: '500',
-            border: '1px solid rgba(239, 68, 68, 0.2)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            {error}
+        
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end' }}>
+          <div className="filter-group" style={{ margin: 0, width: '200px' }}>
+            <label style={{ fontSize: '11px', fontWeight: '600', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px', display: 'block' }}>
+              Analysis Date
+            </label>
+            <div style={{ position: 'relative' }}>
+              <input 
+                type="date" 
+                className="form-input" 
+                value={selectedDate} 
+                onChange={(e) => setSelectedDate(e.target.value)}
+                max={new Date().toISOString().split('T')[0]}
+                style={{ 
+                  padding: '10px 14px', 
+                  borderRadius: '12px', 
+                  fontSize: '14px',
+                  borderColor: isRefreshingQuality ? 'var(--bg-primary)' : 'var(--border-color)',
+                  transition: 'all 0.2s ease'
+                }}
+              />
+              {isRefreshingQuality && (
+                <div style={{ position: 'absolute', right: '35px', top: '50%', transform: 'translateY(-50%)' }}>
+                   <div className="loading-spinner" style={{ width: '14px', height: '14px', borderWidth: '2px' }}></div>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+
+          {error && (
+            <div style={{ 
+              padding: '10px 16px', 
+              background: 'var(--badge-red-bg)', 
+              color: 'var(--badge-red-text)', 
+              borderRadius: '12px',
+              fontSize: '12px',
+              fontWeight: '500',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              height: '42px'
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              {error}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="metrics-grid">
@@ -129,6 +183,7 @@ export default function Dashboard() {
       <DashboardCharts 
         pieData={data.chart_data.pie} 
         barData={data.chart_data.bar} 
+        qualityData={data.chart_data.quality}
       />
       
       <RecentCalls calls={data.recent_calls} />
