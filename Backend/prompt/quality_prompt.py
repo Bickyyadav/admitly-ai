@@ -52,7 +52,7 @@ def get_prompt():
         Return ONLY a valid JSON object. No markdown. No explanation. No code blocks.
 
         {
-        "summary": string,
+        "summary": [{"role": "ai"|"user", "content": string}, ...],
         "quality_score": float,
         "intent": string,
         "outcome": string,

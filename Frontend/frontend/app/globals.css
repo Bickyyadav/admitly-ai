@@ -115,7 +115,7 @@ body {
   color: var(--text-primary);
 }
 
-.logo-icon {
+.logo-icon { 
   background: var(--primary-gradient);
   color: white;
   width: 39px;
