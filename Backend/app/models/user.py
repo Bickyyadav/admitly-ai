@@ -54,7 +54,7 @@ class Call(Document):
 class CallAnalysis(Document):
     call_id: str
     transcript: Optional[str] = None
-    summary: Optional[str] = None
+    summary: list | str | None = None
     intent: Optional[str] = None
     outcome: Optional[str] = None
     quality_score: Optional[int] = None

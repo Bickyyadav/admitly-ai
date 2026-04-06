@@ -1,9 +1,8 @@
-
-
-from pandas.io import json
 from litellm import completion
+
 import os
 import sys
+import json
 
 # Add project root to sys.path so we can import from prompt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
@@ -26,14 +25,16 @@ class AnalystResult(BaseModel):
     intent: str
     outcome: str
 
+
+
 def analyze_conversation(transcript: str) -> AnalystResult | None:
     try:
         response = completion(
             model="fireworks_ai/qwen3-reranker-8b", 
-            api_key=os.getenv("FIREWORKS_API_KEY"),
+            api_key=os.getenv("FIRE_WORKS_API_KEY"),
             messages=[
                 {"content": get_prompt(), "role": "system"},
-                {"content": transcript, "role": "user"},
+                {"content": json.dumps(transcript), "role": "user"},
             ],
             response_format=AnalystResult,
         )
@@ -41,7 +42,6 @@ def analyze_conversation(transcript: str) -> AnalystResult | None:
         print(response)
         content = response.choices[0].message.content
         if isinstance(content, str):
-            import json
             return AnalystResult(**json.loads(content))
         return None
     except Exception as e:
