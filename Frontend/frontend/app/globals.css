@@ -118,7 +118,7 @@ body {
 .logo-icon {
   background: var(--primary-gradient);
   color: white;
-  width: 32px;
+  width: 39px;
   height: 32px;
   border-radius: var(--radius-md);
   display: flex;
@@ -806,19 +806,115 @@ body {
   cursor: not-allowed;
 }
 
-.action-link {
-  color: var(--bg-primary);
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  text-decoration: none;
+.text-gradient {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.action-link:hover {
-  text-decoration: underline;
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
+
+/* Step Indicator */
+.steps-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  position: relative;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.steps-container::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border-color);
+  z-index: 1;
+}
+
+.step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-app);
+  padding: 0 10px;
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  transition: all 0.3s ease;
+}
+
+.step.active .step-circle {
+  background: var(--bg-primary);
+  border-color: var(--bg-primary);
+  color: white;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.step.completed .step-circle {
+  background: #10B981;
+  border-color: #10B981;
+  color: white;
+}
+
+.step-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.step.active .step-label {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Enhanced Table */
+.preview-table-container {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+
+.preview-table-container thead {
+  background: var(--bg-surface-hover);
+}
+
+.preview-table-container th {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -828,6 +924,30 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+
+/* Action Link refined */
+.action-link {
+  color: var(--bg-primary);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.action-link:hover {
+  text-decoration: underline;
+  transform: translateX(2px);
 }
 
 .card {
