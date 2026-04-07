@@ -6,7 +6,7 @@ import json
 import re
 
 # Add project root to sys.path so we can import from prompt
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from dotenv import load_dotenv
 from prompt.quality_prompt import get_prompt
@@ -16,9 +16,11 @@ load_dotenv()
 
 from typing import List
 
+
 class SummaryMessage(BaseModel):
     role: str
     content: str
+
 
 class AnalystResult(BaseModel):
     summary: List[SummaryMessage]
@@ -30,8 +32,8 @@ class AnalystResult(BaseModel):
 def _extract_json_object(raw: str) -> dict:
     """Extract and parse a JSON object from LLM output, even if surrounded by reasoning text."""
     # Step 1: Remove markdown code fences
-    cleaned = re.sub(r'```(?:json)?\s*', '', raw)
-    cleaned = re.sub(r'```', '', cleaned)
+    cleaned = re.sub(r"```(?:json)?\s*", "", raw)
+    cleaned = re.sub(r"```", "", cleaned)
     cleaned = cleaned.strip()
 
     # Step 2: Try direct parse first (fastest path)
@@ -41,7 +43,7 @@ def _extract_json_object(raw: str) -> dict:
         pass
 
     # Step 3: Find the first '{' and match its closing '}' using brace counting
-    start = cleaned.find('{')
+    start = cleaned.find("{")
     if start == -1:
         raise json.JSONDecodeError("No JSON object found in LLM output", cleaned, 0)
 
@@ -53,7 +55,7 @@ def _extract_json_object(raw: str) -> dict:
         if escape_next:
             escape_next = False
             continue
-        if ch == '\\' and in_string:
+        if ch == "\\" and in_string:
             escape_next = True
             continue
         if ch == '"' and not escape_next:
@@ -61,12 +63,12 @@ def _extract_json_object(raw: str) -> dict:
             continue
         if in_string:
             continue
-        if ch == '{':
+        if ch == "{":
             depth += 1
-        elif ch == '}':
+        elif ch == "}":
             depth -= 1
             if depth == 0:
-                json_str = cleaned[start:i + 1]
+                json_str = cleaned[start : i + 1]
                 return json.loads(json_str)
 
     raise json.JSONDecodeError("Unmatched braces in LLM output", cleaned, start)
@@ -78,12 +80,13 @@ def _call_llm(messages: list, attempt: int = 1) -> str | None:
         model="fireworks_ai/accounts/fireworks/models/qwen3p6-plus",
         api_key=os.getenv("FIRE_WORKS_API_KEY"),
         messages=messages,
-        max_tokens=500,
         temperature=0.2,
         response_format={"type": "json_object"},
     )
     content = response.choices[0].message.content
-    print(f"LLM attempt {attempt} raw (first 500 chars): {content[:500] if content else 'None'}")
+    print(
+        f"LLM attempt {attempt} raw (first 500 chars): {content[:500] if content else 'None'}"
+    )
     return content
 
 
@@ -120,7 +123,9 @@ def analyze_conversation(transcript: str) -> AnalystResult | None:
                 continue
 
             # Strip <think>...</think> blocks if present (Qwen thinking mode)
-            content = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+            content = re.sub(
+                r"<think>.*?</think>", "", content, flags=re.DOTALL
+            ).strip()
 
             parsed = _extract_json_object(content)
             return AnalystResult(**parsed)
@@ -139,6 +144,7 @@ def analyze_conversation(transcript: str) -> AnalystResult | None:
             return None
 
     return None
+
 
 if __name__ == "__main__":
     conversation = """

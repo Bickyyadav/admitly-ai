@@ -69,7 +69,7 @@ async def process_excel_file(file: UploadFile):
                     customer={"number": "+91"+phone_number},
                     assistant_id=os.getenv("VAPI_ASSISTANT_ID"),
                     assistant_overrides={
-                        "firstMessage": f"क्या मैं {name} से बात कर सकता हूँ?",
+                        "firstMessage": f"hellow",
                         "server": {"url": os.getenv("VAPI_SERVER_WEBHOOK_URL")},
                         "model": {
                             "provider": "openai",
