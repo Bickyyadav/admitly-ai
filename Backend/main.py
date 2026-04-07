@@ -37,25 +37,29 @@ def read_root():
 vapi = Vapi(token=os.getenv("VAPI_API_KEY"))
 
 
-@app.post("/create-call")
-def create_call():
-    """Endpoint to create an outbound call"""
-    call = vapi.calls.create(
-        phone_number_id=os.getenv("VAPI_PHONE_NUMBER_ID"),
-        customer={"number": "+917782827701"},
-        assistant_id=os.getenv("VAPI_ASSISTANT_ID"),
-        # server_url=os.getenv("VAPI_SERVER_WEBHOOK_URL"),
-        assistant_overrides={
-            "server": {"url": os.getenv("VAPI_SERVER_WEBHOOK_URL")},
-            "model": {
-                "provider": "openai",
-                "model": "gpt-4o-mini",
-                "messages": [{"role": "system", "content": get_prompt("Aman")}],
-            },
-        },
-    )
-
-    return {"call_id": call}
+# @app.post("/create-call")
+# def create_call():
+#     """Endpoint to create an outbound call"""
+#     call = vapi.calls.create(
+#         phone_number_id=os.getenv("VAPI_PHONE_NUMBER_ID"),
+#         customer={"number": "+917782827701"},
+#         assistant_id=os.getenv("VAPI_ASSISTANT_ID"),
+#         # server_url=os.getenv("VAPI_SERVER_WEBHOOK_URL"),
+#         assistant_overrides={
+#             "firstMessage": "हेलो bicky, आज आप कैसे हैं?",
+#             "server": {"url": os.getenv("VAPI_SERVER_WEBHOOK_URL")},
+#             "model": {
+#                 "provider": "openai",
+#                 "model": "gpt-4o-mini",
+#                 "messages": [{"role": "system", "content": get_prompt("Aman") }],
+#                 "language": "hi",
+#             },
+#             "voice": {"provider": "11labs", "voiceId": "burt"},
+#         },
+#     )
+#     print("💦💦")
+#     print("call", call)
+#     return {"call_id": call}
 
 
 @app.post("/vapi-webhook")
@@ -72,7 +76,7 @@ async def vapi_webhook(request: Request):
     print(data)
     message = data.get("message", data)
     event_type = message.get("type", data.get("type"))
-    
+
     print(f"Webhook Event Type: {event_type}")
 
     # Handle different events
@@ -81,6 +85,7 @@ async def vapi_webhook(request: Request):
         call_id = message.get("call", {}).get("id")
         if call_id:
             from app.models.user import Call, CallStatus
+
             call_record = await Call.find_one(Call.call_sid == call_id)
             if call_record:
                 call_record.status = CallStatus.IN_PROGRESS
@@ -88,16 +93,17 @@ async def vapi_webhook(request: Request):
 
     elif event_type in ["call.ended", "end-of-call-report"]:
         print("Call ended... updating database")
-        
+
         call_id = message.get("call", {}).get("id")
         recording_url = message.get("recordingUrl")
         transcript = message.get("transcript")
         duration = message.get("durationSeconds")
         summary = message.get("summary")
         cost = message.get("cost")
-        
+
         if call_id:
             from app.models.user import Call, CallStatus, CallAnalysis
+
             call_record = await Call.find_one(Call.call_sid == call_id)
             if call_record:
                 # Update call record
@@ -106,23 +112,30 @@ async def vapi_webhook(request: Request):
                 if duration is not None:
                     call_record.duration = int(duration)
                 await call_record.save()
-                
+
                 # Analyze transcript using LLM Service
                 llm_summary = summary
                 llm_intent = None
                 llm_outcome = None
                 llm_quality_score = None
                 transcript_str = None
-                
+
                 if transcript:
-                    transcript_str = transcript if isinstance(transcript, str) else json.dumps(transcript)
+                    transcript_str = (
+                        transcript
+                        if isinstance(transcript, str)
+                        else json.dumps(transcript)
+                    )
                     try:
                         from app.services.llm_service import analyze_conversation
+
                         analysis_result = analyze_conversation(transcript_str)
                         if analysis_result:
                             # If summary is a list of objects, we can convert it to dictionaries
                             if isinstance(analysis_result.summary, list):
-                                llm_summary = [msg.model_dump() for msg in analysis_result.summary]
+                                llm_summary = [
+                                    msg.model_dump() for msg in analysis_result.summary
+                                ]
                             else:
                                 llm_summary = analysis_result.summary
                             llm_intent = analysis_result.intent
@@ -139,9 +152,13 @@ async def vapi_webhook(request: Request):
                     summary=llm_summary,
                     intent=llm_intent,
                     outcome=llm_outcome,
-                    quality_score=int(llm_quality_score) if llm_quality_score is not None else None
+                    quality_score=(
+                        int(llm_quality_score)
+                        if llm_quality_score is not None
+                        else None
+                    ),
                 )
-                
+
                 await analysis.insert()
                 print(f"✅ Successfully saved call details for {call_id}")
             else:
@@ -171,8 +188,6 @@ def handle_function_call(message):
 async def startup():
     await connect_db()
     print("✅ Database connected")
-
-
 
 
 if __name__ == "__main__":
