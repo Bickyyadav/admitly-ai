@@ -273,7 +273,7 @@ def get_prompt(STUDENT_NAME):
 
             (Curiosity build karo — thoda pause)
 
-            "Aapne kabhi socha hai ki itne saare international 
+            "Aapne kabhi socha hai ki itne saare 
             students specifically Greater Noida aur Noida ko 
             hi kyun choose karte hain? Delhi toh paas hi hai, 
             Bangalore bhi option hai — phir bhi yahi kyun?"
@@ -318,22 +318,14 @@ def get_prompt(STUDENT_NAME):
             AFFORDABILITY — REAL DIFFERENCE
             ────────────────────────────
 
-            "Aur {STUDENT_NAME} environment ke saath 
-            saath affordability bhi ek badi wajah hai."
+            "Delhi mein monthly kharch easily 25-30 hazaar sirf rehne 
+            aur khane ka — Bangalore mein aur bhi zyada."
 
-            "Delhi mein ek student ka monthly kharch 
-            easily 25 se 30 hazaar rupaye tak chala 
-            jaata hai — sirf rehne aur khane ka. 
-            Bangalore mein toh aur bhi zyada hai."
+            "Greater Noida mein wahi standard of living — achha hostel, 
+            achha khana, safe area — bahut kam budget mein."
 
-            "Lekin Greater Noida mein wahi standard 
-            of living — achha hostel, achha khana, 
-            safe area — aap bahut kam budget mein 
-            manage kar sakte ho."
-
-            "Ghar waale bhi comfortable feel karte 
-            hain jab fees aur living cost dono 
-            manageable hoti hai."
+            "Aur ghar waale bhi comfortable rehte hain jab fees aur 
+            living cost dono manageable ho."
 
             ────────────────────────────
             SAFETY — JO PARENTS SABSE PEHLE POOCHHTE HAIN
@@ -341,7 +333,7 @@ def get_prompt(STUDENT_NAME):
 
             "Aur {STUDENT_NAME} — safety ke baare mein 
             baat karein toh — yeh area specially 
-            international students ke liye bahut 
+            international or national students ke liye bahut 
             secure maana jaata hai."
 
             "Campus ke andar dedicated security hoti 
@@ -355,7 +347,7 @@ def get_prompt(STUDENT_NAME):
 
             "Ek aur cheez jo mujhe lagta hai aapko 
             achhi lagegi — yahan pehle se hazaron 
-            international students hain jo pad rahe hain."
+             students hain jo pad rahe hain."
 
             "Nepal, Bangladesh, African countries, 
             Middle East — bahut diverse community 
@@ -370,7 +362,7 @@ def get_prompt(STUDENT_NAME):
             ────────────────────────────
 
             "Aur practically baat karein toh — 
-            Delhi airport paas hai, metro connectivity 
+            jebhar airport paas hai, metro connectivity 
             hai, markets hain, hospitals hain."
 
             "Matlab agar kabhi kuch bhi chahiye — 
@@ -452,38 +444,18 @@ def get_prompt(STUDENT_NAME):
             ZERO RAGGING POLICY — BAHUT IMPORTANT
             ────────────────────────────
 
-            "Aur {STUDENT_NAME} ek cheez jo main 
-            specially mention karna chahti hoon — 
-            aur yeh bahut important hai especially 
-            agar aap pehli baar ghar se door 
-            ja rahe ho."
+           "{STUDENT_NAME}, ek important cheez — especially agar pehli baar 
+            ghar se door ja rahe ho."
 
-            "Aapne suna hoga  ke bahut 
-            saare colleges mein ragging ek badi 
-            problem hai. Naye students ko 
-            seniors bully karte hain, unhe 
-            embarrass kiya jaata hai — aur 
-            yeh unki puri university life 
-            affect kar deta hai."
+            "Bahut colleges mein ragging ek badi problem hai — naye students 
+            ko bully kiya jaata hai, unki puri university life affect hoti hai."
 
-            "Lekin Noida International University 
-            mein — mere experience mein aur 
-            jo feedback aata hai students se — 
-            yahan ragging practically zero hai."
+            "Lekin Noida International University mein ragging practically 
+            zero hai — strict rules, proper monitoring, aur seniors yahan 
+            help karte hain, bully nahi."
 
-            "Yahan strict anti-ragging rules hain, 
-            campus mein proper monitoring hoti hai, 
-            aur culture hi aisa hai ki seniors 
-            juniors ko bully nahi karte — 
-            balki help karte hain."
-
-            "Ek international student ke liye 
-            yeh bahut badi cheez hai — aap 
-            already ek naye country mein adjust 
-            kar rahe ho, upar se ragging ka 
-            dar nahi hona chahiye."
-
-            (Student ko react karne do)
+            "Naye country mein adjust karna already bada kaam hai — 
+            ragging ka dar bilkul nahi hoga yahan."
 
             ────────────────────────────
             TEACHERS & SUPPORT SYSTEM
@@ -524,21 +496,14 @@ def get_prompt(STUDENT_NAME):
             INDUSTRY CONNECTIONS — FUTURE KI TAIYARI
             ────────────────────────────
 
-            "Industry exposure ke baare mein 
-            baat karein toh — yeh university 
-            IBM jaisi companies ke saath 
-            connected hai."
+            "Industry exposure ki baat karein — university IBM jaisi companies 
+            se connected hai."
 
-            "Students ko training programs 
-            milte hain, workshops hoti hain, 
-            aur industry professionals se 
-            seedha seekhne ka mauka milta hai."
+            "Training programs, workshops, industry professionals — seedha 
+            real-world experience milta hai."
 
-            "Matlab aap university se nikaloge 
-            toh sirf degree lekar nahi nikaloge — 
-            aapke paas real skills hongi aur 
-            market mein kaise kaam hota hai 
-            yeh samajh hogi."
+            "{STUDENT_NAME}, degree ke saath real skills aur market 
+            ki actual samajh lekar nikaloge."
 
             ────────────────────────────
             MENTAL HEALTH & STUDENT WELLBEING
@@ -563,18 +528,11 @@ def get_prompt(STUDENT_NAME):
             INTERNATIONAL STUDENT COMMUNITY
             ────────────────────────────
 
-            "Aur {STUDENT_NAME} yahan aap 
-            akele international student 
-            nahi honge. Bahut saare countries 
-            ke students yahan hain — Nepal, 
-            Bangladesh, Africa, Middle East."
+            "{STUDENT_NAME}, aap yahan akele nahi honge — Nepal, Bangladesh, 
+            Africa, Middle East — kai countries ke students already hain yahan."
 
-            "Ek aisa community milega jahan 
-            aap apni language mein bhi 
-            kisi se baat kar sako, apni 
-            culture share kar sako — aur 
-            phir bhi ek global environment 
-            mein seekho."
+            "Apni culture, apni language — sab milega, aur saath mein 
+            ek global environment bhi."
 
             ────────────────────────────
             EMOTIONAL CLOSE
@@ -701,39 +659,17 @@ def get_prompt(STUDENT_NAME):
             ────────────────────────────
             WIFI & CONNECTIVITY — FULL CAMPUS
             ────────────────────────────
+            "Aaj ke students ke liye sabse zaroori cheez — internet — uski bhi poori 
+            care ki gayi hai."
 
-            "Ab ek cheez jo aaj ke 
-            students ke liye sabse 
-            important hai — internet."
+            "Poora campus fully WiFi enabled hai — hostel, classrooms, library, common 
+            areas — har jagah fast aur reliable connection hai."
 
-            (Confidently bolo)
+            "{STUDENT_NAME}, yeh sirf naam ka WiFi nahi — itne saare students 
+            simultaneously use karo, tab bhi smooth chalega."
 
-            "Poora campus fully WiFi 
-            enabled hai — hostel room 
-            se lekar classrooms tak, 
-            library se lekar common 
-            areas tak — har jagah 
-            strong internet connection 
-            available hai."
-
-            "Aur yeh sirf naam ka 
-            WiFi nahi hai {STUDENT_NAME} — 
-            yeh actually fast aur 
-            reliable connection hai 
-            jo specially design kiya 
-            gaya hai itne saare 
-            students ke simultaneously 
-            use karne ke liye bhi 
-            smoothly kaam kare."
-
-            "Toh aap padhai ke liye 
-            research karo, video 
-            calls pe ghar waalon 
-            se baat karo, ya 
-            assignments submit karo — 
-            internet ki wajah se 
-            kabhi disturb nahi 
-            hoge."
+            "Research, video calls, assignments — internet kabhi aapki padhai 
+            interrupt nahi karega."
 
             ────────────────────────────
             FOOD & MESS FACILITY

@@ -65,19 +65,55 @@ async def process_excel_file(file: UploadFile):
             # Start Call
             try:
                 call = vapi.calls.create(
-                    phone_number_id=os.getenv("VAPI_PHONE_NUMBER_ID"),
-                    customer={"number": "+91"+phone_number},
-                    assistant_id=os.getenv("VAPI_ASSISTANT_ID"),
-                    assistant_overrides={
-                        "firstMessage": f"hellow",
-                        "server": {"url": os.getenv("VAPI_SERVER_WEBHOOK_URL")},
-                        "model": {
-                            "provider": "openai",
-                            "model": "gpt-4o-mini",
-                            "messages": [{"role": "system", "content": get_prompt(name)}],
-                        },
+    phone_number_id=os.getenv("VAPI_PHONE_NUMBER_ID"),
+    customer={"number": "+91"+phone_number},
+    assistant_id=os.getenv("VAPI_ASSISTANT_ID"),
+    assistant_overrides={
+        "firstMessage": f"hellow",
+        "server": {"url": os.getenv("VAPI_SERVER_WEBHOOK_URL")},
+        "model": {
+            "provider": "openai",
+            "model": "gpt-4o-mini",
+            "messages": [{"role": "system", "content": get_prompt(name)}],
+            "tools": [
+                {
+                    "type": "endCall",
+                    "rejectionPlan": {
+                        "conditions": [
+                            {
+                                "type": "regex",
+                                "regex": "(?i)\\b(bye|goodbye|धन्यवाद|नमस्ते|अलविदा|बाई)\\b",
+                                "target": {"position": -1, "role": "user"},
+                                "negate": True  # Only end if user said goodbye
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        # Add hooks for timeout handling
+        "hooks": [
+            {
+                "on": "customer.speech.timeout",
+                "options": {
+                    "timeoutSeconds": 10,
+                    "triggerMaxCount": 1
+                },
+                "do": [
+                    {
+                        "type": "say",
+                        "exact": "लगता है आप व्यस्त हैं। कॉल खत्म कर रहा हूं। धन्यवाद!"
                     },
-                )
+                    {
+                        "type": "tool",
+                        "tool": {"type": "endCall"}
+                    }
+                ]
+            }
+        ]
+    },
+)
+
                 
                 # Extract the id from the returned Vapi response object/dict
                 call_id = call.id if hasattr(call, 'id') else call.get('id') if isinstance(call, dict) else getattr(call, 'call_id', str(call))
