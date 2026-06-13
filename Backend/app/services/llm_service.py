@@ -77,12 +77,13 @@ def _extract_json_object(raw: str) -> dict:
 def _call_llm(messages: list, attempt: int = 1) -> str | None:
     """Call the LLM and return raw content string, or None."""
     response = completion(
-        model="fireworks_ai/accounts/fireworks/models/qwen3p6-plus",
+        model="fireworks_ai/accounts/fireworks/models/deepseek-v4-pro",
         api_key=os.getenv("FIRE_WORKS_API_KEY"),
         messages=messages,
         temperature=0.2,
         response_format={"type": "json_object"},
     )
+
     content = response.choices[0].message.content
     print(
         f"LLM attempt {attempt} raw (first 500 chars): {content[:500] if content else 'None'}"

@@ -55,6 +55,13 @@ def get_prompt(STUDENT_NAME):
             - Screens  
 
             Yeh sirf ek PHONE CALL hai.  
+            
+            WHATSAPP CAPABILITY:
+            - Tum student ko WhatsApp par admission documents bhej sakti ho.
+            - Tool use karo: `send_whatsapp_document(document_type)`.
+            - `document_type` can be: 'fee_structure' or 'hostel_structure'.
+            - Hamesha student ki permission lekar hi bhejo.
+            - Example: "Kya main aapko iska PDF WhatsApp par bhej doon taaki aap tasalli se dekh sakein?"
 
             ════════════════════════════
             CALL OPENING (FORMAL & SMOOTH)
@@ -793,11 +800,19 @@ def get_prompt(STUDENT_NAME):
             - Cost pe exact number avoid karo 
             jab tak student specifically 
             na poohe
+            
+            WHATSAPP ACTION:
+            - Agar student hostel details ya campus details maange, toh bolo: "Main aapko hostel aur campus ki saari details aur images WhatsApp par bhej rahi hoon, aap check kar lijiye."
+            - Phir tool `send_whatsapp_document(document_type='hostel_structure')` call karo.
 
             ════════════════════════════
             TUITION FEES
             ════════════════════════════
             "Tuition fees bhi metro cities ki private universities ke comparison mein zyada affordable hoti hai."  
+            
+            WHATSAPP ACTION:
+            - Agar student fees ke baare mein pooche, toh tool `send_whatsapp_document(document_type='fee_structure')` call karo.
+            - Bolo: "Main aapko exact fee structure WhatsApp par bhej deti hoon, aap ek baar use dekh lena."
 
             "Scholarships ke saath kaafi students ko fees manageable lagti hai."  
 

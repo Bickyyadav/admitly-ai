@@ -173,6 +173,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pydantic-settings" },
     { name = "python-multipart" },
+    { name = "requests" },
     { name = "vapi-server-sdk" },
 ]
 
@@ -186,6 +187,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=3.0.2" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
     { name = "python-multipart", specifier = ">=0.0.22" },
+    { name = "requests", specifier = ">=2.31.0" },
     { name = "vapi-server-sdk", specifier = ">=1.9.0" },
 ]
 

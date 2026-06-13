@@ -4,11 +4,13 @@ from fastapi.responses import JSONResponse
 from app.routes import upload_file, stats, user
 from vapi import Vapi
 import os
+from app.services.whatsapp_service import whatsapp_service
 import time
 from dotenv import load_dotenv
 from prompt.system_prompt import get_prompt
 from app.config.dbconfig import connect_db
 from fastapi.middleware.cors import CORSMiddleware
+from app.tool_call.handle_whatsapp_tollcall import handle_tool_call
 
 load_dotenv()
 
@@ -164,24 +166,24 @@ async def vapi_webhook(request: Request):
             else:
                 print(f"⚠️ Call record not found for call_id: {call_id}")
 
+    elif event_type == "tool-calls":
+        print("Handling Tool Call")
+        tool_calls = message.get("toolCalls", [])
+        results = []
+        for tool_call in tool_calls:
+            result = await handle_tool_call(tool_call, message.get("call", {}))
+            results.append({
+                "toolCallId": tool_call.get("id"),
+                "result": result
+            })
+        return {"results": results}
+
     elif event_type == "speech":
         pass
 
     return {"status": "ok"}
 
 
-def handle_function_call(message):
-    function_call = message.get("functionCall", {})
-    function_name = function_call.get("name")
-
-    if function_name == "lookup_order":
-        order_data = {
-            "orderId": function_call.get("parameters", {}).get("orderId"),
-            "status": "shipped",
-        }
-        return {"result": order_data}
-
-    return JSONResponse(status_code=400, content={"error": "Unknown function"})
 
 
 @app.on_event("startup")
@@ -192,5 +194,12 @@ async def startup():
 
 if __name__ == "__main__":
     import uvicorn
+    import os
+    # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 8000))
+    # Enable reload only in development to prevent overhead in production
+    reload = os.getenv("ENVIRONMENT", "development") == "development"
+    uvicorn.run("main:app", host=host, port=port, reload=reload)
 
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+
